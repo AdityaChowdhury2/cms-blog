@@ -1,12 +1,22 @@
 import { Module } from '@nestjs/common';
-import { PostService } from './post.service';
-import { PostController } from './post.controller';
+import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PostAggregateService } from './aggregate/post-aggregate/post-aggregate.service';
+import { CreatePostCommandHandler } from './commands/create-post/create-post-command.handler';
 import { Post } from './entities/post.entity';
+import { PostService } from './entities/post.service';
+import { PostCreatedEventHandler } from './events/post-created-event.handler';
+import { PostController } from './post.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post])],
+  imports: [TypeOrmModule.forFeature([Post]), CqrsModule],
   controllers: [PostController],
-  providers: [PostService],
+  providers: [
+    PostService,
+    PostAggregateService,
+    CreatePostCommandHandler,
+    PostCreatedEventHandler,
+  ],
+  exports: [PostAggregateService],
 })
 export class PostModule {}

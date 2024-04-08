@@ -8,18 +8,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostModule = void 0;
 const common_1 = require("@nestjs/common");
-const post_service_1 = require("./post.service");
-const post_controller_1 = require("./post.controller");
+const cqrs_1 = require("@nestjs/cqrs");
 const typeorm_1 = require("@nestjs/typeorm");
+const post_aggregate_service_1 = require("./aggregate/post-aggregate/post-aggregate.service");
+const create_post_command_handler_1 = require("./commands/create-post/create-post-command.handler");
 const post_entity_1 = require("./entities/post.entity");
+const post_service_1 = require("./entities/post.service");
+const post_created_event_handler_1 = require("./events/post-created-event.handler");
+const post_controller_1 = require("./post.controller");
 let PostModule = class PostModule {
 };
 exports.PostModule = PostModule;
 exports.PostModule = PostModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([post_entity_1.Post])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([post_entity_1.Post]), cqrs_1.CqrsModule],
         controllers: [post_controller_1.PostController],
-        providers: [post_service_1.PostService],
+        providers: [
+            post_service_1.PostService,
+            post_aggregate_service_1.PostAggregateService,
+            create_post_command_handler_1.CreatePostCommandHandler,
+            post_created_event_handler_1.PostCreatedEventHandler,
+        ],
+        exports: [post_aggregate_service_1.PostAggregateService],
     })
 ], PostModule);
 //# sourceMappingURL=post.module.js.map
